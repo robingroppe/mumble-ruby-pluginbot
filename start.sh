@@ -1,36 +1,37 @@
 #!/bin/bash
 
 DEBUG=""
-FIRST_START_FILE="/home/botmaster/src/.first_start_done"
+USER="$(whoami)"
+FIRST_START_FILE="/home/$USER/src/.first_start_done"
 
 if [ "$1" == "debug" ];
 then
-    DEBUG=">> /home/botmaster/logs/pluginbots.log 2>&1"
-    mkdir /home/botmaster/logs
+    DEBUG=">> /home/$USER/logs/pluginbots.log 2>&1"
+    mkdir /home/$USER/logs
 fi
 
 ### Kill all running mpd instances (of the user botmaster) ... ###
-echo "Killing running mpd instances of user \"$LOGNAME\""
+echo "Killing running mpd instances of user $USER"
 killall mpd > /dev/null 2>&1
 sleep 2
 killall mpd > /dev/null 2>&1
 
 
 ### Start needed mpd instances for botmaster ###
-mpd /home/botmaster/mpd1/mpd.conf
-#mpd /home/botmaster/mpd2/mpd.conf
-#mpd /home/botmaster/mpd3/mpd.conf
+mpd /home/$USER/mpd1/mpd.conf
+#mpd /home/$USER/mpd2/mpd.conf
+#mpd /home/$USER/mpd3/mpd.conf
 
 
 # Do an update of youtube-dl on every start as there are very often updates.
-if [ -f /home/botmaster/src/youtube-dl ]; then
+if [ -f /home/$USER/src/youtube-dl ]; then
     echo "Updating youtube-dl..."
-    /home/botmaster/src/youtube-dl -U
+    /home/$USER/src/youtube-dl -U
 fi
 
 
 ### Kill running mumble-ruby-pluginbots (of the user botmaster) ###
-echo "Killing running ruby scripts of user \"$LOGNAME\""
+echo "Killing running ruby scripts of user $USER"
 killall ruby > /dev/null 2>&1
 sleep 1
 killall ruby > /dev/null 2>&1
@@ -39,17 +40,17 @@ source ~/.rvm/scripts/rvm
 rvm use @bots
 
 ### We need to be in this directory in order to start the bot(s).
-cd /home/botmaster/src/mumble-ruby-pluginbot/
+cd /home/$USER/src/mumble-ruby-pluginbot/
 
 ### Start Mumble-Ruby-Bots - MPD instances must already be running. ###
 # Bot 1
-tmux new-session -d -n bot1 "LD_LIBRARY_PATH=/home/botmaster/src/celt/lib/ ruby /home/botmaster/src/mumble-ruby-pluginbot/pluginbot.rb --config=/home/botmaster/src/bot1_conf.rb$DEBUG"
+tmux new-session -d -n bot1 "LD_LIBRARY_PATH=/home/$USER/src/celt/lib/ ruby /home/$USER/src/mumble-ruby-pluginbot/pluginbot.rb --config=/home/$USER/src/bot1_conf.rb$DEBUG"
 
 # Bot 2
-#tmux new-session -d -n bot2 "LD_LIBRARY_PATH=/home/botmaster/src/celt/lib/ ruby /home/botmaster/src/mumble-ruby-pluginbot/pluginbot.rb --config=/home/botmaster/src/bot2_conf.rb$DEBUG"
+#tmux new-session -d -n bot2 "LD_LIBRARY_PATH=/home/$USER/src/celt/lib/ ruby /home/$USER/src/mumble-ruby-pluginbot/pluginbot.rb --config=/home/$USER/src/bot2_conf.rb$DEBUG"
 
 # Bot 3
-#tmux new-session -d -n bot3 "LD_LIBRARY_PATH=/home/botmaster/src/celt/lib/ ruby /home/botmaster/src/mumble-ruby-pluginbot/pluginbot.rb --config=/home/botmaster/src/bot3_conf.rb$DEBUG"
+#tmux new-session -d -n bot3 "LD_LIBRARY_PATH=/home/$USER/src/celt/lib/ ruby /home/$USER/src/mumble-ruby-pluginbot/pluginbot.rb --config=/home/$USER/src/bot3_conf.rb$DEBUG"
 
 
 
@@ -61,7 +62,7 @@ then
     mpc -p 7701 add http://ogg.theradio.cc/
     mpc -p 7701 play
 
-    touch /home/botmaster/src/.first_start_done
+    touch /home/$USER/src/.first_start_done
 fi
 
 # Bot 2
